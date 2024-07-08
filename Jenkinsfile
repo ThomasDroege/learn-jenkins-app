@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NETLIFY_SITE_ID = '9b9b397f-9ab1-45dc-a04e-18ad91f4d50d'
+        NETLIFY_SITE_ID = 'YOUR NETLIFY SITE ID'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
     }
 
@@ -13,7 +13,8 @@ pipeline {
                 docker {
                     image 'node:18-alpine'
                     reuseNode true
-                    args '-u root:root'
+					args '-u root:root'
+
                 }
             }
             steps {
@@ -21,7 +22,7 @@ pipeline {
                     ls -la
                     node --version
                     npm --version
-                    npm install
+                    npm ci
                     npm run build
                     ls -la
                 '''
@@ -56,7 +57,7 @@ pipeline {
                         docker {
                             image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                             reuseNode true
-                            args '-u root:root'
+							args '-u root:root'
                         }
                     }
 
@@ -71,19 +72,19 @@ pipeline {
 
                     post {
                         always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright Local', reportTitles: '', useWrapperFileDirectly: true])
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Local E2E', reportTitles: '', useWrapperFileDirectly: true])
                         }
                     }
                 }
             }
         }
 
-               stage('Deploy staging') {
+        stage('Deploy staging') {
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                     reuseNode true
-                    args '-u root:root'
+					args '-u root:root'
                 }
             }
 
@@ -123,7 +124,7 @@ pipeline {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                     reuseNode true
-                    args '-u root:root'
+					args '-u root:root'
                 }
             }
 
