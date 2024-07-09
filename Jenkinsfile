@@ -3,9 +3,8 @@ pipeline {
 
     environment {
         NETLIFY_SITE_ID = '9b9b397f-9ab1-45dc-a04e-18ad91f4d50d'
-        NETLIFY_AUTH_TOKEN = credentials('netlify-token')        
+        NETLIFY_AUTH_TOKEN = credentials('netlify-token')
         REACT_APP_VERSION = "1.0.$BUILD_ID"
-
     }
 
     stages {
@@ -38,6 +37,7 @@ pipeline {
                         docker {
                             image 'node:18-alpine'
                             reuseNode true
+							args '-u root:root'
                         }
                     }
 
@@ -113,14 +113,6 @@ pipeline {
             }
         }
 
-        stage('Approval') {
-            steps {
-                timeout(time: 15, unit: 'MINUTES') {
-                    input message: 'Do you wish to deploy to production?', ok: 'Yes, I am sure!'
-                }
-            }
-        }
-
         stage('Deploy prod') {
             agent {
                 docker {
@@ -131,7 +123,7 @@ pipeline {
             }
 
             environment {
-                CI_ENVIRONMENT_URL = 'YOUR NETLIFY URL'
+                CI_ENVIRONMENT_URL = 'https://keen-griffin-cffc0d.netlify.app'
             }
 
             steps {
